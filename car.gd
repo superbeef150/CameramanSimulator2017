@@ -38,7 +38,6 @@ func checkIfInTurnInRoad(position):
 # Returns new Vector2 indicating new direction. Assumes only up, down, left, and right as directions (no angles)
 # currentDir should be a vector indicating current direction of object, turnDir is an int indicating left or right
 func turn(currentDir, turnDir):
-	print(currentDir, turnDir)
 	if (currentDir.x > 0): #moving right, ie: Vector2(1, 0)
 		if (turnDir == RIGHT): return Vector2(currentDir.y, currentDir.x) #Go Down
 		return Vector2(currentDir.y, currentDir.x * - 1) #Go Up

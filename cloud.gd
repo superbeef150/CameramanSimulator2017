@@ -10,7 +10,6 @@ func _process(delta):
 	if Input.is_action_pressed("move_right"): moveRight(delta)
 
 func moveUp(delta):
-	print("up")
 	move(delta, 0, -1)
 
 func moveDown(delta):
@@ -25,7 +24,6 @@ func moveRight(delta):
 #x: positive for right, negative for left, 0 for none.
 #y: positive for down, negative for up, 0 for none.
 func move(delta, x, y):
-	print("yes")
 	var pos = get_pos()
 	pos.x += x * maxSpeed * delta
 	pos.y += y * maxSpeed * delta
