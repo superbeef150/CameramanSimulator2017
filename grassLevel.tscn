@@ -1,4 +1,4 @@
-[gd_scene load_steps=9 format=1]
+[gd_scene load_steps=10 format=1]
 
 [ext_resource path="res://grassLevel.gd" type="Script" id=1]
 [ext_resource path="res://grass.png" type="Texture" id=2]
@@ -7,9 +7,10 @@
 [ext_resource path="res://cloud.png" type="Texture" id=5]
 [ext_resource path="res://cloud.gd" type="Script" id=6]
 [ext_resource path="res://racer-red.png" type="Texture" id=7]
-[ext_resource path="res://road-horizontal.png" type="Texture" id=8]
+[ext_resource path="res://road-bend.png" type="Texture" id=8]
+[ext_resource path="res://road-horizontal.png" type="Texture" id=9]
 
-[node name="grassLevel" type="Node2D"]
+[node name="level" type="Node2D"]
 
 script/script = ExtResource( 1 )
 
@@ -19,10 +20,10 @@ focus/ignore_mouse = true
 focus/stop_mouse = true
 size_flags/horizontal = 2
 size_flags/vertical = 2
-margin/left = 0.0
-margin/top = 8.0
-margin/right = 1022.0
-margin/bottom = 606.0
+margin/left = -20.0
+margin/top = 50.0
+margin/right = 1002.0
+margin/bottom = 648.0
 texture = ExtResource( 2 )
 stretch_mode = 2
 
@@ -30,7 +31,8 @@ stretch_mode = 2
 
 [node name="blueCar" type="Sprite" parent="cars"]
 
-transform/pos = Vector2( 175.904, 432.503 )
+transform/pos = Vector2( 690, 570 )
+z/z = 100
 texture = ExtResource( 3 )
 script/script = ExtResource( 4 )
 
@@ -59,6 +61,7 @@ __meta__ = {
 [node name="cloudMan" type="Sprite" parent="cars"]
 
 transform/pos = Vector2( 292.756, 409.25 )
+z/z = 100
 texture = ExtResource( 5 )
 script/script = ExtResource( 6 )
 
@@ -87,7 +90,8 @@ __meta__ = {
 
 [node name="redCar" type="Sprite" parent="cars"]
 
-transform/pos = Vector2( 164.498, 466.997 )
+transform/pos = Vector2( 280, 460 )
+z/z = 100
 texture = ExtResource( 7 )
 script/script = ExtResource( 4 )
 
@@ -113,19 +117,83 @@ __meta__ = {
 "_edit_lock_": true
 }
 
-[node name="road" type="Sprite" parent="."]
+[node name="roads" type="Node" parent="."]
 
-transform/pos = Vector2( 369.506, 452.039 )
+[node name="turns" type="Node" parent="roads"]
+
+[node name="right" type="Node" parent="roads/turns"]
+
+[node name="roadTurnRight" type="Sprite" parent="roads/turns/right"]
+
+transform/pos = Vector2( 400, 450 )
 texture = ExtResource( 8 )
 
-[node name="road1" type="Sprite" parent="."]
+[node name="roadTurnRight1" type="Sprite" parent="roads/turns/right"]
 
-transform/pos = Vector2( 244.528, 451.499 )
+transform/pos = Vector2( 210, 450 )
+transform/rot = 90.0
 texture = ExtResource( 8 )
 
-[node name="road2" type="Sprite" parent="."]
+[node name="roadTurnRight2" type="Sprite" parent="roads/turns/right"]
 
-transform/pos = Vector2( 306.129, 451.499 )
+transform/pos = Vector2( 210, 570 )
+transform/rot = 180.0
 texture = ExtResource( 8 )
+
+[node name="roadTurnRight3" type="Sprite" parent="roads/turns/right"]
+
+transform/pos = Vector2( 400, 570 )
+transform/rot = 270.0
+texture = ExtResource( 8 )
+
+[node name="left" type="Node" parent="roads/turns"]
+
+[node name="roadTurnLeft" type="Sprite" parent="roads/turns/left"]
+
+transform/pos = Vector2( 640, 570 )
+texture = ExtResource( 8 )
+flip_h = true
+flip_v = true
+
+[node name="roadTurnLeft1" type="Sprite" parent="roads/turns/left"]
+
+transform/pos = Vector2( 770, 570 )
+transform/rot = 90.0
+texture = ExtResource( 8 )
+flip_h = true
+flip_v = true
+
+[node name="roadTurnLeft2" type="Sprite" parent="roads/turns/left"]
+
+transform/pos = Vector2( 770, 460 )
+transform/rot = 180.0
+texture = ExtResource( 8 )
+flip_h = true
+flip_v = true
+
+[node name="roadTurnLeft3" type="Sprite" parent="roads/turns/left"]
+
+transform/pos = Vector2( 640, 460 )
+transform/rot = 270.0
+texture = ExtResource( 8 )
+flip_h = true
+flip_v = true
+
+[node name="straight" type="Node" parent="roads"]
+
+[node name="horizontal" type="Node" parent="roads/straight"]
+
+[node name="roadHorizontal" type="Sprite" parent="roads/straight/horizontal"]
+
+transform/pos = Vector2( 340, 450 )
+texture = ExtResource( 9 )
+
+[node name="vertical" type="Node" parent="roads/straight"]
+
+[node name="roadVertical1" type="Sprite" parent="roads/straight/vertical"]
+
+transform/pos = Vector2( 400, 510 )
+transform/rot = 90.0
+texture = ExtResource( 9 )
 
 

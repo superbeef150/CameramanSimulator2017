@@ -2,58 +2,84 @@
 extends Node2D
 
 # Member variables
+const RIGHT = 1
+const LEFT = -1
+const NAH = 0
 const INITIAL_SPEED = 80
+const TURNING_SPEED = 50
+const TURN_LENGTH = .3 #delta
 var speed = INITIAL_SPEED
+var turning = 0 #0 for not turning, otherwise delta til turning is done
+const TURNING_COOLDOWN_TIME = 1
+var turningCooldown = 0
 var screen_size = Vector2(640, 400)
+
 
 # Default direction
 var direction = Vector2(1, 0)
 var size = Vector2(25, 16) #overwritten dynamically in ready function so this can be whatever
 
+# Check if we should turn. Return the direction
+func checkIfInTurnInRoad(position):
+	var leftTurns = get_node("/root/level/roads/turns/left").get_children()
+	var rightTurns = get_node("/root/level/roads/turns/right").get_children()
+	for leftTurn in leftTurns:
+		var texture = leftTurn.get_texture()
+		var size = Vector2(texture.get_width(), texture.get_height())
+		var collisionBox = Rect2(leftTurn.get_pos() - size*0.5, size)
+		if (collisionBox.has_point(position)): return LEFT
+	for rightTurn in rightTurns: #this should be refactored bc copypasta
+		var texture = rightTurn.get_texture()
+		var size = Vector2(texture.get_width(), texture.get_height())
+		var collisionBox = Rect2(rightTurn.get_pos() - size*0.5, size)
+		if (collisionBox.has_point(position)): return RIGHT
+	return NAH
+
+# Returns new Vector2 indicating new direction. Assumes only up, down, left, and right as directions (no angles)
+# currentDir should be a vector indicating current direction of object, turnDir is an int indicating left or right
+func turn(currentDir, turnDir):
+	print(currentDir, turnDir)
+	if (currentDir.x > 0): #moving right, ie: Vector2(1, 0)
+		if (turnDir == RIGHT): return Vector2(currentDir.y, currentDir.x) #Go Down
+		return Vector2(currentDir.y, currentDir.x * - 1) #Go Up
+	if (currentDir.x < 0): #moving left, ie: Vector2(-1, 0)
+		if (turnDir == RIGHT): return Vector2(currentDir.y * -1, currentDir.x) #Go Up
+		return Vector2(currentDir.y, currentDir.x * - 1) #Go Down
+	if (currentDir.y > 0): #moving down, ie: Vector2(0, 1)
+		if (turnDir == RIGHT): return Vector2(currentDir.y * - 1, currentDir.x) #Go Left
+		return Vector2(currentDir.y, currentDir.x) #Go Right
+	if (currentDir.y < 0): #moving up, ie: Vector2(0, -1)
+		if (turnDir == RIGHT): return Vector2(currentDir.y * -1, currentDir.x) #Go Right
+		return Vector2(currentDir.y, currentDir.x) #Go Left
 
 func _process(delta):
+	var position = get_pos()
 	
-	# Get  position and pad rectangles
-	var position = get_pos() #get_node("ball").get_pos()
-	#var left_rect = Rect2(get_node("left").get_pos() - size*0.5, size)
-	#var right_rect = Rect2(get_node("right").get_pos() - size*0.5, size)
-	
-	# Integrate new ball postion
+	# Integrate new car postion
 	position += direction*speed*delta
-	
-	# Flip when touching roof or floor
-	#if ((position.y < 0 and direction.y < 0) or (position.y > screen_size.y and direction.y > 0)):
-	#	direction.y = -direction.y
-	
-	# Flip, change direction and increase speed when touching pads
-	#if ((left_rect.has_point(position) and direction.x < 0) or (right_rect.has_point(position) and direction.x > 0)):
-	#	direction.x = -direction.x
-	#	speed *= 1.1
-	#	direction.y = randf()*2.0 - 1
-	#	direction = direction.normalized()
 	
 	set_pos(position) #get_node("ball").set_pos(position)
 	
-	# Move left pad
-	#var left_pos = get_node("left").get_pos()
+	#if turning and almost done, finish the turn by changing directions and set cooldown timer
+	if (turning > 0 and (turning - delta <= 0)):
+		var directionToTurn = checkIfInTurnInRoad(position)
+		if (directionToTurn != NAH):
+			direction = turn(direction, directionToTurn)
+			speed = INITIAL_SPEED
+			turning = 0
+			turningCooldown = TURNING_COOLDOWN_TIME
 	
-	#if (left_pos.y > 0 and Input.is_action_pressed("left_move_up")):
-		#left_pos.y += -PAD_SPEED*delta
-	#if (left_pos.y < screen_size.y and Input.is_action_pressed("left_move_down")):
-		#left_pos.y += PAD_SPEED*delta
+	#Decrement *ALL* the timers!
+	if (turning > 0): turning = turning - delta
+	if (turningCooldown > 0): turningCooldown = turningCooldown - delta
 	
-	#get_node("left").set_pos(left_pos)
-	
-	# Move right pad
-	#var right_pos = get_node("right").get_pos()
-	
-	#if (right_pos.y > 0 and Input.is_action_pressed("right_move_up")):
-		#right_pos.y += -PAD_SPEED*delta
-	#if (right_pos.y < screen_size.y and Input.is_action_pressed("right_move_down")):
-		#right_pos.y += PAD_SPEED*delta
-	
-	#get_node("right").set_pos(right_pos)
-
+	#If not turning, see if we're hitting a turn in the road, start to turn, and start timer to when to stop turning
+	if (turning <= 0 and turningCooldown <= 0):
+		var directionToTurn = checkIfInTurnInRoad(position)
+		if (directionToTurn != NAH):
+			turning = TURN_LENGTH
+			speed = TURNING_SPEED
+			print('skrrrt')
 
 func _ready():
 	screen_size = get_viewport_rect().size # Get actual size
