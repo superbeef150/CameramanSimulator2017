@@ -1,4 +1,4 @@
-# The best unfinished game to be inspried by itch.io Game Jam 2017
+# The best unfinished game to be inspired by itch.io Game Jam 2017
 
 I know, I hate the repo name too.
 
